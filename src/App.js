@@ -9,11 +9,6 @@ import Rank from './components/Rank/Rank';
 import './App.css';
 import Particles from "react-tsparticles";
 import particlesOptions from "./particles.json";
-import Clarifai from "clarifai";
-
-const app = new Clarifai.App({
-  apiKey: 'a3b31a7f2e7d4b8fad439abd5e5acede'
- });
 
  const initialState = {
   input: '',
@@ -80,13 +75,15 @@ loadUser = (data) => {
   }
 
     onButtonSubmit = () => {
-      this.setState({imageURL: this.state.input});
-      app.models
-      .initModel({
-        id: Clarifai.FACE_DETECT_MODEL,
+      this.setState({imageURL: this.state.input})
+      fetch('http://localhost:3000/imageurl', {
+        method: 'post',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            input: this.state.input
+        })    
       })
-      .then((faceDetectModel) => {
-        return faceDetectModel.predict(this.state.input)})
+      .then(response => response.json())
       .then((response) => {
         if (response) {
           fetch('http://localhost:3000/image', {
@@ -100,11 +97,9 @@ loadUser = (data) => {
           .then(count => {
             this.setState(Object.assign(this.state.user, { entries: count}))
         })
-        .catch(console.log)
       }
         return this.displayFaceBox(this.calculateFaceLocation(response))
-      })
-      .catch(err => console.log('face recognition failed'))
+      });
     }
 
     onRouteChange = (route) => {
