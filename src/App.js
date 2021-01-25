@@ -9,6 +9,7 @@ import Rank from './components/Rank/Rank';
 import './App.css';
 import Particles from "react-tsparticles";
 import particlesOptions from "./particles.json";
+import Clarifai from "clarifai";
 
  const initialState = {
   input: '',
